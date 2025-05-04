@@ -9,17 +9,17 @@ async function main() {
   // Create admin user
   console.log("Creating admin user...")
   const adminUser = await prisma.user.upsert({
-    where: { email: "admin@blueocean4x4.com" },
+    where: { email: "bpchetter@gmail.com" },
     update: {},
     create: {
-      name: "Admin User",
-      email: "admin@blueocean4x4.com",
-      clerkId: "admin_clerk_id", // Replace with actual Clerk ID when available
+      name: "Brandon Chetter",
+      email: "bpchetter@gmail.com",
+      clerkId: "user_2wd0FufkrqL9oNKvZIOv0kT01JA", // Replace with actual Clerk ID when available
       isAdmin: true,
       role: "ADMIN",
     },
   })
-  console.log(`Created admin user with ID: ${adminUser.id}`)
+  console.log(`Created admin user Brandon Chetter with ID: ${adminUser.id}`)
 
   // Create booking slots
   console.log("Creating booking slots...")

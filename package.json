@@ -58,14 +58,14 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "latest",
-    "prisma": "latest",
     "@tanstack/react-query": "latest",
     "@trpc/client": "latest",
     "@trpc/server": "latest",
-    "@prisma/client": "latest",
-    "@clerk/nextjs": "latest",
+    "prisma": "latest",
     "@trpc/react-query": "latest",
-    "child_process": "latest"
+    "@prisma/client": "latest",
+    "child_process": "latest",
+    "@clerk/nextjs": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

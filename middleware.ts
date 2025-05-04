@@ -1,4 +1,4 @@
-import { authMiddleware } from "@clerk/nextjs"
+import { authMiddleware } from "@clerk/nextjs/server"
 
 export default authMiddleware({
   publicRoutes: ["/", "/schedule", "/accommodation", "/sponsors", "/api/trpc/(.*)", "/api/submit-booking", "/success"],

@@ -4,12 +4,21 @@ import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const user = await getCurrentUser()
+  try {
+    const user = await getCurrentUser()
 
-  return {
-    prisma,
-    user,
-    ...opts,
+    return {
+      prisma,
+      user,
+      ...opts,
+    }
+  } catch (error) {
+    console.error("Error creating tRPC context:", error)
+    return {
+      prisma,
+      user: null,
+      ...opts,
+    }
   }
 }
 
