@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useUser } from "@clerk/nextjs"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { useUser } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { UserCircle } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { UserCircle } from "lucide-react";
 
 export function UserNav() {
-  const { user, isSignedIn } = useUser()
+  const { user, isSignedIn } = useUser();
 
   if (!isSignedIn) {
     return (
@@ -25,13 +25,16 @@ export function UserNav() {
           <Link href="/sign-up">Sign Up</Link>
         </Button>
       </div>
-    )
+    );
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button
+          variant="ghost"
+          className="relative h-8 w-8 rounded-full border border-gray-300"
+        >
           {user.imageUrl ? (
             <img
               src={user.imageUrl || "/placeholder.svg"}
@@ -48,7 +51,9 @@ export function UserNav() {
           <div className="flex flex-col space-y-1 leading-none">
             {user.fullName && <p className="font-medium">{user.fullName}</p>}
             {user.emailAddresses && (
-              <p className="w-[200px] truncate text-sm text-gray-500">{user.emailAddresses[0].emailAddress}</p>
+              <p className="w-[200px] truncate text-sm text-gray-500">
+                {user.emailAddresses[0].emailAddress}
+              </p>
             )}
           </div>
         </div>
@@ -56,7 +61,7 @@ export function UserNav() {
         <DropdownMenuItem asChild>
           <Link href="/profile">My Profile</Link>
         </DropdownMenuItem>
-        {user.publicMetadata.isAdmin && (
+        {user.publicMetadata?.isAdmin === true && (
           <DropdownMenuItem asChild>
             <Link href="/admin">Admin Dashboard</Link>
           </DropdownMenuItem>
@@ -67,5 +72,5 @@ export function UserNav() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -13,32 +13,51 @@ export const bookingRouter = router({
         participants: z.number().int().positive(),
         vehicleTypes: z.array(z.string()),
         vehicleCount: z.number().int().positive(),
-        accommodation: z.string(),
+        accommodation: z.string().optional(),
         arrivalDate: z.date(),
         departureDate: z.date(),
         specialRequests: z.string().optional(),
-        slotId: z.string(),
+        slotIds: z.array(z.string()).min(1),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // Check if the slot exists and has available spots
-      const slot = await ctx.db.bookingSlot.findUnique({
-        where: { id: input.slotId },
-      })
-
-      if (!slot) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Booking slot not found",
+      // Check if all slots exist and have available spots
+      const slots = await Promise.all(
+        input.slotIds.map(async (slotId) => {
+          const slot = await ctx.db.bookingSlot.findUnique({
+            where: { id: slotId },
+          })
+          if (!slot) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: `Booking slot ${slotId} not found`,
+            })
+          }
+          if (slot.availableSpots < input.participants) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: `Not enough available spots in ${slot.name} for this booking`,
+            })
+          }
+          return slot
         })
-      }
+      )
 
-      if (slot.availableSpots < input.participants) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Not enough available spots for this booking",
+      // Get vehicle types
+      const vehicleTypes = await Promise.all(
+        input.vehicleTypes.map(async (name) => {
+          const vehicleType = await ctx.db.vehicleType.findUnique({
+            where: { name },
+          })
+          if (!vehicleType) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: `Vehicle type ${name} not found`,
+            })
+          }
+          return vehicleType
         })
-      }
+      )
 
       // Create the booking
       const booking = await ctx.db.booking.create({
@@ -47,24 +66,37 @@ export const bookingRouter = router({
           email: input.email,
           phone: input.phone,
           participants: input.participants,
-          vehicleTypes: input.vehicleTypes,
+          vehicleTypes: {
+            connect: vehicleTypes.map((vt) => ({ id: vt.id })),
+          },
           vehicleCount: input.vehicleCount,
-          accommodation: input.accommodation,
+          accommodation: input.accommodation || "none",
           arrivalDate: input.arrivalDate,
           departureDate: input.departureDate,
           specialRequests: input.specialRequests,
           userId: ctx.user?.id,
-          slotId: input.slotId,
+          slotId: input.slotIds[0], // Keep the first slot as primary for backward compatibility
+          bookingSlots: {
+            connect: input.slotIds.map((id) => ({ id })),
+          },
+        },
+        include: {
+          vehicleTypes: true,
+          bookingSlots: true,
         },
       })
 
-      // Update available spots in the slot
-      await ctx.db.bookingSlot.update({
-        where: { id: input.slotId },
-        data: {
-          availableSpots: slot.availableSpots - input.participants,
-        },
-      })
+      // Update available spots in all slots
+      await Promise.all(
+        slots.map((slot) =>
+          ctx.db.bookingSlot.update({
+            where: { id: slot.id },
+            data: {
+              availableSpots: slot.availableSpots - input.participants,
+            },
+          })
+        )
+      )
 
       return booking
     }),

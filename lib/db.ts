@@ -40,6 +40,7 @@ export type BookingSlot = {
   price: number
   description: string | null
   isActive: boolean
+  imageUrl: string | null
   createdAt: Date
   updatedAt: Date
 }

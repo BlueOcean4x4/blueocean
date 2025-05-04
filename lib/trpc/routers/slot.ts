@@ -30,6 +30,7 @@ export const slotRouter = router({
         price: z.number().positive(),
         description: z.string().optional(),
         isActive: z.boolean().default(true),
+        imageUrl: z.string().url().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -59,6 +60,7 @@ export const slotRouter = router({
         price: z.number().positive().optional(),
         description: z.string().optional(),
         isActive: z.boolean().optional(),
+        imageUrl: z.string().url().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

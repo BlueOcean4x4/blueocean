@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SlotForm } from "@/components/admin/slot-form";
+import { ScheduleForm } from "@/components/admin/schedule-form";
 import { Trash2, Pencil } from "lucide-react";
 import {
   AlertDialog,
@@ -33,82 +33,90 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-interface Slot {
+interface Schedule {
   id: string;
-  name: string;
-  startDate: string;
-  endDate: string;
-  totalCapacity: number;
-  availableSpots: number;
-  price: number;
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  maxParticipants: number;
+  currentParticipants: number;
   isActive: boolean;
 }
 
-export default function ManageSlots() {
+export default function ManageSchedule() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingSlot, setEditingSlot] = useState<Slot | null>(null);
+  const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [slotToDelete, setSlotToDelete] = useState<string | null>(null);
+  const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
 
-  const { data: slots, isLoading, refetch } = trpc.slot.getAll.useQuery();
-  const deleteSlot = trpc.slot.delete.useMutation({
+  const {
+    data: schedules,
+    isLoading,
+    refetch,
+  } = trpc.schedule.getAll.useQuery();
+  const deleteSchedule = trpc.schedule.delete.useMutation({
     onSuccess: () => refetch(),
   });
 
-  const handleEdit = (slot: Slot) => {
-    setEditingSlot(slot);
+  const handleEdit = (schedule: Schedule) => {
+    setEditingSchedule(schedule);
     setIsDialogOpen(true);
   };
 
   const handleDelete = (id: string) => {
-    setSlotToDelete(id);
+    setScheduleToDelete(id);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (slotToDelete) {
+    if (scheduleToDelete) {
       try {
-        await deleteSlot.mutateAsync({ id: slotToDelete });
+        await deleteSchedule.mutateAsync(scheduleToDelete);
         setDeleteDialogOpen(false);
-        setSlotToDelete(null);
+        setScheduleToDelete(null);
       } catch (error: any) {
-        alert(error.message || "Failed to delete slot");
+        alert(error.message || "Failed to delete schedule");
       }
     }
   };
 
   const handleFormClose = () => {
     setIsDialogOpen(false);
-    setEditingSlot(null);
+    setEditingSchedule(null);
     refetch();
   };
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-2 mb-4 sm:mb-6">
-        <h2 className="text-lg sm:text-xl font-bold">Manage Booking Slots</h2>
+        <h2 className="text-lg sm:text-xl font-bold">Manage Schedule</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
-              onClick={() => setEditingSlot(null)}
+              onClick={() => setEditingSchedule(null)}
               className="w-full sm:w-auto"
             >
-              Add New Slot
+              Add New Schedule
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>
-                {editingSlot ? "Edit Slot" : "Add New Slot"}
+                {editingSchedule ? "Edit Schedule" : "Add New Schedule"}
               </DialogTitle>
             </DialogHeader>
-            <SlotForm slot={editingSlot} onClose={handleFormClose} />
+            <ScheduleForm
+              schedule={editingSchedule || undefined}
+              onClose={handleFormClose}
+            />
           </DialogContent>
         </Dialog>
       </div>
 
       {isLoading ? (
-        <div className="text-center py-8">Loading slots...</div>
+        <div className="text-center py-8">Loading schedules...</div>
       ) : (
         <div className="overflow-x-auto -mx-3 sm:mx-0">
           <div className="min-w-full inline-block align-middle">
@@ -116,62 +124,68 @@ export default function ManageSlots() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="whitespace-nowrap">Name</TableHead>
-                    <TableHead className="whitespace-nowrap">Dates</TableHead>
+                    <TableHead className="whitespace-nowrap">Title</TableHead>
+                    <TableHead className="whitespace-nowrap">Time</TableHead>
                     <TableHead className="whitespace-nowrap">
-                      Capacity
+                      Location
                     </TableHead>
                     <TableHead className="whitespace-nowrap">
-                      Available
+                      Participants
                     </TableHead>
-                    <TableHead className="whitespace-nowrap">Price</TableHead>
                     <TableHead className="whitespace-nowrap">Status</TableHead>
                     <TableHead className="whitespace-nowrap">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {slots?.length === 0 ? (
+                  {schedules?.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-4">
-                        No booking slots found
+                      <TableCell colSpan={6} className="text-center py-4">
+                        No schedules found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    slots?.map((slot: Slot) => (
-                      <TableRow key={slot.id}>
+                    schedules?.map((schedule: Schedule) => (
+                      <TableRow key={schedule.id}>
                         <TableCell className="whitespace-nowrap">
-                          {slot.name}
+                          {schedule.title}
                         </TableCell>
                         <TableCell className="whitespace-nowrap">
-                          {format(new Date(slot.startDate), "MMM d, yyyy")} -{" "}
-                          {format(new Date(slot.endDate), "MMM d, yyyy")}
+                          {schedule.startTime && schedule.endTime ? (
+                            <>
+                              {format(
+                                new Date(schedule.startTime),
+                                "MMM d, yyyy HH:mm"
+                              )}{" "}
+                              - {format(new Date(schedule.endTime), "HH:mm")}
+                            </>
+                          ) : (
+                            "No time set"
+                          )}
                         </TableCell>
                         <TableCell className="whitespace-nowrap">
-                          {slot.totalCapacity}
+                          {schedule.location}
                         </TableCell>
                         <TableCell className="whitespace-nowrap">
-                          {slot.availableSpots}
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">
-                          R{slot.price.toFixed(2)}
+                          {schedule.currentParticipants}/
+                          {schedule.maxParticipants}
                         </TableCell>
                         <TableCell className="whitespace-nowrap">
                           <Badge
                             className={
-                              slot.isActive
+                              schedule.isActive
                                 ? "bg-green-100 text-green-800"
                                 : "bg-gray-100 text-gray-800"
                             }
                           >
-                            {slot.isActive ? "Active" : "Inactive"}
+                            {schedule.isActive ? "Active" : "Inactive"}
                           </Badge>
                         </TableCell>
-                        <TableCell className="whitespace-nowrap">
+                        <TableCell>
                           <div className="flex gap-2">
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleEdit(slot)}
+                              onClick={() => handleEdit(schedule)}
                               className="p-2"
                             >
                               <Pencil className="w-4 h-4" />
@@ -180,8 +194,8 @@ export default function ManageSlots() {
                               variant="outline"
                               size="sm"
                               className="text-red-600 hover:text-red-700 p-2"
-                              onClick={() => handleDelete(slot.id)}
-                              disabled={deleteSlot.isPending}
+                              onClick={() => handleDelete(schedule.id)}
+                              disabled={deleteSchedule.isPending}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -203,7 +217,7 @@ export default function ManageSlots() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              booking slot.
+              schedule item.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

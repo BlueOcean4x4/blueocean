@@ -1,49 +1,60 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Menu, X, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useUser } from "@clerk/nextjs"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Menu, X, User, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@clerk/nextjs";
 
 export function MobileMenu() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { user, isSignedIn } = useUser()
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, isSignedIn } = useUser();
 
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
-      setIsOpen(false)
-    }
+      setIsOpen(false);
+    };
 
     if (isOpen) {
-      document.addEventListener("click", handleClickOutside)
+      document.addEventListener("click", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("click", handleClickOutside)
-    }
-  }, [isOpen])
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isOpen]);
 
   const toggleMenu = (e: React.MouseEvent) => {
-    e.stopPropagation() // Prevent the click from immediately closing the menu
-    setIsOpen(!isOpen)
-  }
+    e.stopPropagation(); // Prevent the click from immediately closing the menu
+    setIsOpen(!isOpen);
+  };
 
   const menuItemClick = () => {
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
   return (
     <div className="relative">
-      <Button variant="ghost" size="icon" onClick={toggleMenu} aria-label="Toggle menu" aria-expanded={isOpen}>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleMenu}
+        aria-label="Toggle menu"
+        aria-expanded={isOpen}
+      >
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
       </Button>
 
       {/* Mobile menu overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={menuItemClick}></div>}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={menuItemClick}
+        ></div>
+      )}
 
       {/* Mobile menu */}
       <div
@@ -107,7 +118,10 @@ export function MobileMenu() {
                   className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
                   onClick={menuItemClick}
                 >
-                  Admin Dashboard
+                  <div className="flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    <span>Admin Dashboard</span>
+                  </div>
                 </Link>
               )}
               <Link
@@ -139,5 +153,5 @@ export function MobileMenu() {
         </div>
       </div>
     </div>
-  )
+  );
 }

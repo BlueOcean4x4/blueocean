@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
@@ -9,34 +8,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { format } from "date-fns";
-import { Upload } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { X, Upload } from "lucide-react";
 import Image from "next/image";
 
-interface SlotFormProps {
-  slot?: any;
+interface Accommodation {
+  id: string;
+  name: string;
+  type: string;
+  description?: string;
+  price: number;
+  capacity: number;
+  availableUnits: number;
+  amenities: string[];
+  isActive: boolean;
+  imageUrl?: string;
+}
+
+interface AccommodationFormProps {
+  accommodation?: Accommodation;
   onClose: () => void;
 }
 
-export function SlotForm({ slot, onClose }: SlotFormProps) {
+export function AccommodationForm({
+  accommodation,
+  onClose,
+}: AccommodationFormProps) {
   const [formData, setFormData] = useState({
-    name: slot?.name || "",
-    startDate: slot?.startDate
-      ? format(new Date(slot.startDate), "yyyy-MM-dd")
-      : "",
-    endDate: slot?.endDate ? format(new Date(slot.endDate), "yyyy-MM-dd") : "",
-    totalCapacity: slot?.totalCapacity || 0,
-    availableSpots: slot?.availableSpots || 0,
-    price: slot?.price || 0,
-    description: slot?.description || "",
-    isActive: slot?.isActive ?? true,
-    imageUrl: slot?.imageUrl || "",
+    name: accommodation?.name || "",
+    type: accommodation?.type || "",
+    description: accommodation?.description || "",
+    price: accommodation?.price || 0,
+    capacity: accommodation?.capacity || 0,
+    availableUnits: accommodation?.availableUnits || 0,
+    amenities: accommodation?.amenities || ([] as string[]),
+    isActive: accommodation?.isActive ?? true,
+    imageUrl: accommodation?.imageUrl || "",
   });
+  const [newAmenity, setNewAmenity] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  const createSlot = trpc.slot.create.useMutation();
-  const updateSlot = trpc.slot.update.useMutation();
+  const createAccommodation = trpc.accommodation.create.useMutation();
+  const updateAccommodation = trpc.accommodation.update.useMutation();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -55,6 +69,23 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
     });
   };
 
+  const handleAddAmenity = () => {
+    if (newAmenity.trim() && !formData.amenities.includes(newAmenity.trim())) {
+      setFormData({
+        ...formData,
+        amenities: [...formData.amenities, newAmenity.trim()],
+      });
+      setNewAmenity("");
+    }
+  };
+
+  const handleRemoveAmenity = (amenity: string) => {
+    setFormData({
+      ...formData,
+      amenities: formData.amenities.filter((a: string) => a !== amenity),
+    });
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -63,9 +94,11 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
     setError(null);
 
     try {
+      // Create form data
       const formData = new FormData();
       formData.append("file", file);
 
+      // Upload to your image hosting service (e.g., Cloudinary, AWS S3, etc.)
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
@@ -92,28 +125,28 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
     setError(null);
 
     try {
-      if (slot) {
-        await updateSlot.mutateAsync({
-          id: slot.id,
+      if (accommodation) {
+        await updateAccommodation.mutateAsync({
+          id: accommodation.id,
           name: formData.name,
-          startDate: new Date(formData.startDate),
-          endDate: new Date(formData.endDate),
-          totalCapacity: Number(formData.totalCapacity),
-          availableSpots: Number(formData.availableSpots),
-          price: Number(formData.price),
+          type: formData.type,
           description: formData.description,
+          price: Number(formData.price),
+          capacity: Number(formData.capacity),
+          availableUnits: Number(formData.availableUnits),
+          amenities: formData.amenities,
           isActive: formData.isActive,
           imageUrl: formData.imageUrl,
         });
       } else {
-        await createSlot.mutateAsync({
+        await createAccommodation.mutateAsync({
           name: formData.name,
-          startDate: new Date(formData.startDate),
-          endDate: new Date(formData.endDate),
-          totalCapacity: Number(formData.totalCapacity),
-          availableSpots: Number(formData.availableSpots),
-          price: Number(formData.price),
+          type: formData.type,
           description: formData.description,
+          price: Number(formData.price),
+          capacity: Number(formData.capacity),
+          availableUnits: Number(formData.availableUnits),
+          amenities: formData.amenities,
           isActive: formData.isActive,
           imageUrl: formData.imageUrl,
         });
@@ -131,7 +164,7 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
       )}
 
       <div className="space-y-2">
-        <Label>Slot Image</Label>
+        <Label>Accommodation Image</Label>
         <div className="flex items-center gap-4">
           {formData.imageUrl && (
             <div className="relative w-32 h-32">
@@ -167,7 +200,7 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Slot Name</Label>
+          <Label htmlFor="name">Name</Label>
           <Input
             id="name"
             name="name"
@@ -178,68 +211,11 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="price">Price (R)</Label>
+          <Label htmlFor="type">Type</Label>
           <Input
-            id="price"
-            name="price"
-            type="number"
-            min="0"
-            step="0.01"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="startDate">Start Date</Label>
-          <Input
-            id="startDate"
-            name="startDate"
-            type="date"
-            value={formData.startDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="endDate">End Date</Label>
-          <Input
-            id="endDate"
-            name="endDate"
-            type="date"
-            value={formData.endDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="totalCapacity">Total Capacity</Label>
-          <Input
-            id="totalCapacity"
-            name="totalCapacity"
-            type="number"
-            min="1"
-            value={formData.totalCapacity}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="availableSpots">Available Spots</Label>
-          <Input
-            id="availableSpots"
-            name="availableSpots"
-            type="number"
-            min="0"
-            value={formData.availableSpots}
+            id="type"
+            name="type"
+            value={formData.type}
             onChange={handleChange}
             required
           />
@@ -257,6 +233,86 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
         />
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="price">Price (R)</Label>
+          <Input
+            id="price"
+            name="price"
+            type="number"
+            min="0"
+            step="0.01"
+            value={formData.price}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="capacity">Capacity</Label>
+          <Input
+            id="capacity"
+            name="capacity"
+            type="number"
+            min="1"
+            value={formData.capacity}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="availableUnits">Available Units</Label>
+          <Input
+            id="availableUnits"
+            name="availableUnits"
+            type="number"
+            min="0"
+            value={formData.availableUnits}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Amenities</Label>
+        <div className="flex gap-2">
+          <Input
+            value={newAmenity}
+            onChange={(e) => setNewAmenity(e.target.value)}
+            placeholder="Add an amenity"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAddAmenity();
+              }
+            }}
+          />
+          <Button type="button" onClick={handleAddAmenity}>
+            Add
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-2">
+          {formData.amenities.map((amenity: string) => (
+            <Badge
+              key={amenity}
+              variant="secondary"
+              className="flex items-center gap-1"
+            >
+              {amenity}
+              <button
+                type="button"
+                onClick={() => handleRemoveAmenity(amenity)}
+                className="hover:text-red-600"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      </div>
+
       <div className="flex items-center space-x-2">
         <Switch
           id="isActive"
@@ -272,9 +328,13 @@ export function SlotForm({ slot, onClose }: SlotFormProps) {
         </Button>
         <Button
           type="submit"
-          disabled={createSlot.isPending || updateSlot.isPending || isUploading}
+          disabled={
+            createAccommodation.isPending ||
+            updateAccommodation.isPending ||
+            isUploading
+          }
         >
-          {slot ? "Update Slot" : "Create Slot"}
+          {accommodation ? "Update Accommodation" : "Create Accommodation"}
         </Button>
       </div>
     </form>

@@ -10,7 +10,7 @@
     "postinstall": "prisma generate",
     "db:init": "npx tsx scripts/db-init.ts",
     "db:push": "npx prisma db push",
-    "db:seed": "npx tsx lib/seed.ts",
+    "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "npx prisma studio"
   },
   "dependencies": {
@@ -48,6 +48,7 @@
     "@trpc/client": "latest",
     "@trpc/react-query": "latest",
     "@trpc/server": "latest",
+    "@vercel/blob": "^1.0.1",
     "autoprefixer": "^10.4.20",
     "child_process": "latest",
     "class-variance-authority": "^0.7.1",
