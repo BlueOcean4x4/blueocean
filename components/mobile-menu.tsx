@@ -44,6 +44,7 @@ export function MobileMenu() {
         onClick={toggleMenu}
         aria-label="Toggle menu"
         aria-expanded={isOpen}
+        className="h-10 w-10 p-0"
       >
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
       </Button>
@@ -63,93 +64,95 @@ export function MobileMenu() {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="px-4 py-2 space-y-0 divide-y divide-gray-100">
+        <div className="flex flex-col divide-y divide-gray-100">
           <Link
             href="/"
-            className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+            className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={menuItemClick}
           >
             Home
           </Link>
           <Link
             href="/schedule"
-            className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+            className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={menuItemClick}
           >
             Schedule
           </Link>
           <Link
             href="/accommodation"
-            className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+            className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={menuItemClick}
           >
             Accommodation
           </Link>
           <Link
             href="/sponsors"
-            className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+            className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={menuItemClick}
           >
             Sponsors
           </Link>
           <Link
             href="/#booking"
-            className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+            className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={menuItemClick}
           >
             Book Now
           </Link>
 
-          {isSignedIn ? (
-            <>
-              <Link
-                href="/profile"
-                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
-                onClick={menuItemClick}
-              >
-                <div className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  <span>My Profile</span>
-                </div>
-              </Link>
-              {user?.publicMetadata.isAdmin && (
+          <div className="border-t border-gray-100">
+            {isSignedIn ? (
+              <>
                 <Link
-                  href="/admin"
-                  className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+                  href="/profile"
+                  className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                   onClick={menuItemClick}
                 >
                   <div className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    <span>Admin Dashboard</span>
+                    <User className="h-5 w-5" />
+                    <span>My Profile</span>
                   </div>
                 </Link>
-              )}
-              <Link
-                href="/sign-out"
-                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
-                onClick={menuItemClick}
-              >
-                Sign Out
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/sign-in"
-                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
-                onClick={menuItemClick}
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
-                onClick={menuItemClick}
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
+                {user?.publicMetadata.isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    onClick={menuItemClick}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      <span>Admin Dashboard</span>
+                    </div>
+                  </Link>
+                )}
+                <Link
+                  href="/sign-out"
+                  className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                  onClick={menuItemClick}
+                >
+                  Sign Out
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                  onClick={menuItemClick}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                  onClick={menuItemClick}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

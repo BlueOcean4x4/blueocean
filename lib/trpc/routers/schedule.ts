@@ -20,7 +20,7 @@ export const scheduleRouter = router({
   create: protectedProcedure
     .input(
       z.object({
-        date: z.date(),
+        date: z.string().transform((str) => new Date(str)),
         title: z.string(),
         description: z.string(),
         startTime: z.string(),
@@ -38,7 +38,7 @@ export const scheduleRouter = router({
     .input(
       z.object({
         id: z.string(),
-        date: z.date().optional(),
+        date: z.string().transform((str) => new Date(str)).optional(),
         title: z.string().optional(),
         description: z.string().optional(),
         startTime: z.string().optional(),

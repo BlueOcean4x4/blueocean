@@ -7,12 +7,21 @@ const sponsorSchema = z.object({
   websiteUrl: z.string().url(),
   logoUrl: z.string().url(),
   tier: z.enum(["GOLD", "SILVER", "BRONZE"]),
+  amount: z.number().min(0),
   isActive: z.boolean(),
 })
 
 export const sponsorRouter = router({
   getAll: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.sponsor.findMany()
+  }),
+  getTotalAmount: publicProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db.sponsor.aggregate({
+      _sum: {
+        amount: true
+      }
+    })
+    return result._sum.amount || 0
   }),
   create: publicProcedure
     .input(sponsorSchema)

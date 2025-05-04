@@ -44,6 +44,7 @@ interface Sponsor {
   websiteUrl: string;
   logoUrl: string;
   tier: "GOLD" | "SILVER" | "BRONZE";
+  amount: number;
   isActive: boolean;
 }
 
@@ -72,6 +73,7 @@ export default function SponsorsPage() {
     websiteUrl: string;
     logoUrl: string;
     tier: "GOLD" | "SILVER" | "BRONZE";
+    amount: number;
     isActive: boolean;
   }>({
     name: "",
@@ -79,6 +81,7 @@ export default function SponsorsPage() {
     websiteUrl: "",
     logoUrl: "",
     tier: "BRONZE",
+    amount: 0,
     isActive: true,
   });
   const [isUploading, setIsUploading] = useState(false);
@@ -112,6 +115,8 @@ export default function SponsorsPage() {
     onSuccess: () => refetchRequests(),
   });
 
+  const { data: totalAmount } = trpc.sponsor.getTotalAmount.useQuery();
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -119,6 +124,7 @@ export default function SponsorsPage() {
       websiteUrl: "",
       logoUrl: "",
       tier: "BRONZE",
+      amount: 0,
       isActive: true,
     });
     setSelectedSponsor(null);
@@ -144,6 +150,7 @@ export default function SponsorsPage() {
       websiteUrl: sponsor.websiteUrl,
       logoUrl: sponsor.logoUrl,
       tier: sponsor.tier,
+      amount: sponsor.amount,
       isActive: sponsor.isActive,
     });
     setIsFormOpen(true);
@@ -230,7 +237,14 @@ export default function SponsorsPage() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-2">
-        <h2 className="text-xl sm:text-2xl font-bold">Manage Sponsors</h2>
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold">Manage Sponsors</h2>
+          {totalAmount !== undefined && (
+            <p className="text-sm text-gray-600 mt-1">
+              Total Sponsorship: ${totalAmount.toLocaleString()}
+            </p>
+          )}
+        </div>
         <Button
           onClick={() => setIsFormOpen(true)}
           className="w-full sm:w-auto"
@@ -323,6 +337,24 @@ export default function SponsorsPage() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="amount">Amount ($)</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={formData.amount}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        amount: parseFloat(e.target.value) || 0,
+                      }))
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label>Logo</Label>
                   <div className="flex items-center gap-4">
                     {formData.logoUrl && (
@@ -388,6 +420,9 @@ export default function SponsorsPage() {
                           Tier
                         </TableHead>
                         <TableHead className="whitespace-nowrap">
+                          Amount
+                        </TableHead>
+                        <TableHead className="whitespace-nowrap">
                           Status
                         </TableHead>
                         <TableHead className="whitespace-nowrap">
@@ -426,6 +461,9 @@ export default function SponsorsPage() {
                               >
                                 {sponsor.tier}
                               </Badge>
+                            </TableCell>
+                            <TableCell className="whitespace-nowrap">
+                              ${sponsor.amount.toLocaleString()}
                             </TableCell>
                             <TableCell className="whitespace-nowrap">
                               <Badge

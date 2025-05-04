@@ -4,11 +4,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Mountain } from "lucide-react";
-import { MobileMenu } from "@/components/mobile-menu";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TRPCProvider } from "@/components/providers/trpc-provider";
-import { UserNav } from "@/components/user-nav";
-import { MainNav } from "@/components/main-nav";
+import { NavMenu } from "@/components/nav-menu";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,12 +38,8 @@ export default function RootLayout({
                       </span>
                     </Link>
                   </div>
-                  <div className="hidden md:flex items-center space-x-6">
-                    <MainNav />
-                    <UserNav />
-                  </div>
-                  <div className="md:hidden flex items-center">
-                    <MobileMenu />
+                  <div className="flex items-center">
+                    <NavMenu />
                   </div>
                 </div>
               </div>

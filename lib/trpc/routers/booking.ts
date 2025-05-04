@@ -14,8 +14,8 @@ export const bookingRouter = router({
         vehicleTypes: z.array(z.string()),
         vehicleCount: z.number().int().positive(),
         accommodation: z.string().optional(),
-        arrivalDate: z.date(),
-        departureDate: z.date(),
+        arrivalDate: z.string().transform((str) => new Date(str)),
+        departureDate: z.string().transform((str) => new Date(str)),
         specialRequests: z.string().optional(),
         slotIds: z.array(z.string()).min(1),
       }),
@@ -199,6 +199,7 @@ export const bookingRouter = router({
       where: { userId: ctx.user.id },
       include: {
         slot: true,
+        vehicleTypes: true,
       },
       orderBy: {
         createdAt: "desc",

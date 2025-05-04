@@ -5,17 +5,8 @@ import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Clock, Trash2, Edit } from "lucide-react";
 import { format } from "date-fns";
-
-interface Schedule {
-  id: string;
-  date: Date;
-  title: string;
-  description: string;
-  startTime: string;
-  location: string;
-  activities: string[];
-  isActive: boolean;
-}
+import { Schedule } from "@prisma/client";
+import { ScheduleForm } from "./schedule-form";
 
 interface ScheduleListProps {
   initialSchedules: Schedule[];
@@ -23,6 +14,7 @@ interface ScheduleListProps {
 
 export function ScheduleList({ initialSchedules }: ScheduleListProps) {
   const [schedules, setSchedules] = useState(initialSchedules);
+  const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
   const utils = trpc.useUtils();
 
   const deleteSchedule = trpc.schedule.delete.useMutation({
@@ -47,6 +39,10 @@ export function ScheduleList({ initialSchedules }: ScheduleListProps) {
     await toggleActive.mutateAsync({ id, isActive: !isActive });
   };
 
+  const handleEdit = (schedule: Schedule) => {
+    setEditingSchedule(schedule);
+  };
+
   return (
     <div className="space-y-4">
       {schedules.map((schedule) => (
@@ -60,6 +56,13 @@ export function ScheduleList({ initialSchedules }: ScheduleListProps) {
               <h2 className="text-lg font-bold">{schedule.title}</h2>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEdit(schedule)}
+              >
+                <Edit className="h-4 w-4 text-blue-500" />
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
@@ -103,6 +106,16 @@ export function ScheduleList({ initialSchedules }: ScheduleListProps) {
           </div>
         </div>
       ))}
+
+      {editingSchedule && (
+        <ScheduleForm
+          schedule={editingSchedule}
+          onSuccess={() => {
+            setEditingSchedule(null);
+            utils.schedule.getAll.invalidate();
+          }}
+        />
+      )}
     </div>
   );
 }

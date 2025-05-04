@@ -26,6 +26,7 @@ type Sponsor = {
   logoUrl: string;
   websiteUrl: string;
   tier: "GOLD" | "SILVER" | "BRONZE";
+  amount: number;
 };
 
 export default function SponsorsPage() {
@@ -328,14 +329,19 @@ function SponsorCard({ sponsor }: { sponsor: Sponsor }) {
             <p className="text-sm text-gray-600 mb-2 line-clamp-2">
               {sponsor.description}
             </p>
-            <Link
-              href={sponsor.websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:underline"
-            >
-              Visit Website
-            </Link>
+            <div className="flex items-center justify-between">
+              <Link
+                href={sponsor.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Visit Website
+              </Link>
+              <span className="text-sm font-medium text-green-600">
+                ${sponsor.amount.toLocaleString()}
+              </span>
+            </div>
           </div>
         </div>
       </div>

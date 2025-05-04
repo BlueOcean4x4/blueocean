@@ -15,6 +15,13 @@ import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import type { BookingSlot } from "@/lib/db";
 
+interface VehicleType {
+  id: string;
+  name: string;
+  description: string | null;
+  isActive: boolean;
+}
+
 export function BookingForm() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -35,6 +42,8 @@ export function BookingForm() {
 
   const { data: slots, isLoading: slotsLoading } =
     trpc.slot.getActive.useQuery();
+  const { data: vehicleTypes, isLoading: vehicleTypesLoading } =
+    trpc.vehicleType.getActive.useQuery();
   const createBooking = trpc.booking.create.useMutation();
 
   const handleChange = (
@@ -59,6 +68,27 @@ export function BookingForm() {
       setFormData({
         ...formData,
         vehicleTypes: formData.vehicleTypes.filter((type) => type !== value),
+      });
+    }
+  };
+
+  const handleSlotChange = (slotId: string, checked: boolean) => {
+    if (checked) {
+      const selectedSlot = slots?.find(
+        (slot: BookingSlot) => slot.id === slotId
+      );
+      if (selectedSlot) {
+        setFormData({
+          ...formData,
+          slotIds: [...formData.slotIds, slotId],
+          arrivalDate: format(new Date(selectedSlot.startDate), "yyyy-MM-dd"),
+          departureDate: format(new Date(selectedSlot.endDate), "yyyy-MM-dd"),
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        slotIds: formData.slotIds.filter((id) => id !== slotId),
       });
     }
   };
@@ -90,8 +120,8 @@ export function BookingForm() {
         vehicleTypes: formData.vehicleTypes,
         vehicleCount: Number(formData.vehicleCount),
         accommodation: formData.accommodation,
-        arrivalDate: new Date(formData.arrivalDate + "T00:00:00"),
-        departureDate: new Date(formData.departureDate + "T00:00:00"),
+        arrivalDate: formData.arrivalDate + "T00:00:00",
+        departureDate: formData.departureDate + "T00:00:00",
         specialRequests: formData.specialRequests,
         slotIds: formData.slotIds,
       });
@@ -174,54 +204,24 @@ export function BookingForm() {
       <div className="space-y-1 md:space-y-2">
         <Label className="text-sm font-medium">Vehicle Type</Label>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="quadBike"
-              checked={formData.vehicleTypes.includes("Quad Bike")}
-              onCheckedChange={(checked) =>
-                handleCheckboxChange("Quad Bike", checked === true)
-              }
-            />
-            <Label htmlFor="quadBike" className="text-sm md:text-base">
-              Quad Bike
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="sideBySide"
-              checked={formData.vehicleTypes.includes("Side-by-Side")}
-              onCheckedChange={(checked) =>
-                handleCheckboxChange("Side-by-Side", checked === true)
-              }
-            />
-            <Label htmlFor="sideBySide" className="text-sm md:text-base">
-              Side-by-Side
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="4x4Car"
-              checked={formData.vehicleTypes.includes("4x4 Car")}
-              onCheckedChange={(checked) =>
-                handleCheckboxChange("4x4 Car", checked === true)
-              }
-            />
-            <Label htmlFor="4x4Car" className="text-sm md:text-base">
-              4x4 Car
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="other"
-              checked={formData.vehicleTypes.includes("Other")}
-              onCheckedChange={(checked) =>
-                handleCheckboxChange("Other", checked === true)
-              }
-            />
-            <Label htmlFor="other" className="text-sm md:text-base">
-              Other
-            </Label>
-          </div>
+          {vehicleTypesLoading ? (
+            <p>Loading vehicle types...</p>
+          ) : (
+            vehicleTypes?.map((type: VehicleType) => (
+              <div key={type.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={type.id}
+                  checked={formData.vehicleTypes.includes(type.name)}
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange(type.name, checked === true)
+                  }
+                />
+                <Label htmlFor={type.id} className="text-sm md:text-base">
+                  {type.name}
+                </Label>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -243,7 +243,7 @@ export function BookingForm() {
 
       <div className="space-y-1 md:space-y-2">
         <Label className="text-sm font-medium">Event Packages</Label>
-        <div className="space-y-4">
+        <div className="space-y-4 h-[75vh] overflow-y-auto">
           {slotsLoading ? (
             <p>Loading packages...</p>
           ) : (
@@ -255,21 +255,9 @@ export function BookingForm() {
                 <Checkbox
                   id={`slot-${slot.id}`}
                   checked={formData.slotIds.includes(slot.id)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setFormData({
-                        ...formData,
-                        slotIds: [...formData.slotIds, slot.id],
-                      });
-                    } else {
-                      setFormData({
-                        ...formData,
-                        slotIds: formData.slotIds.filter(
-                          (id) => id !== slot.id
-                        ),
-                      });
-                    }
-                  }}
+                  onCheckedChange={(checked) =>
+                    handleSlotChange(slot.id, checked === true)
+                  }
                 />
                 <div className="space-y-1">
                   <Label
