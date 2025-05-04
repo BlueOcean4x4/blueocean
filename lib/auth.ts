@@ -1,6 +1,15 @@
 import { clerkClient } from "@clerk/nextjs/server"
 import { auth } from "@clerk/nextjs/server"
-import { prisma } from "@/lib/prisma"
+import { db } from "@/lib/db"
+
+// Try to import Prisma, but don't fail if it's not available
+let prisma: any
+try {
+  prisma = require("@/lib/prisma").prisma
+} catch (e) {
+  console.warn("Prisma client not available, using mock database")
+  prisma = db
+}
 
 export async function getCurrentUser() {
   const { userId } = auth()

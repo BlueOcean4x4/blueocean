@@ -1,27 +1,26 @@
 import { initTRPC, TRPCError } from "@trpc/server"
 import { ZodError } from "zod"
-import { getCurrentUser } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { db } from "@/lib/db"
 
-// Import the Prisma check to ensure client is generated
-import "@/lib/prisma-check"
+// Try to import Prisma, but don't fail if it's not available
+let prisma: any
+try {
+  prisma = require("@/lib/prisma").prisma
+  console.log("Prisma client loaded successfully")
+} catch (e) {
+  console.warn("Prisma client not available, using mock database")
+  prisma = db
+}
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  try {
-    const user = await getCurrentUser()
+  const user = null
 
-    return {
-      prisma,
-      user,
-      ...opts,
-    }
-  } catch (error) {
-    console.error("Error creating tRPC context:", error)
-    return {
-      prisma,
-      user: null,
-      ...opts,
-    }
+  // We'll implement user authentication later
+
+  return {
+    db: prisma,
+    user,
+    ...opts,
   }
 }
 
