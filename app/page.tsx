@@ -2,8 +2,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Calendar, MapPin, Clock, Users, Tent, Car } from "lucide-react"
+import { BookingForm } from "@/components/booking-form"
 
 export default function Home() {
+  // Rest of the component remains the same, just replace the inline BookingForm with:
+  // <BookingForm />
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -325,159 +329,5 @@ export default function Home() {
         </div>
       </footer>
     </div>
-  )
-}
-
-function BookingForm() {
-  return (
-    <form className="space-y-5 md:space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <div className="space-y-1 md:space-y-2">
-          <label htmlFor="fullName" className="text-sm font-medium">
-            Full Name
-          </label>
-          <input
-            id="fullName"
-            className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-            required
-          />
-        </div>
-        <div className="space-y-1 md:space-y-2">
-          <label htmlFor="email" className="text-sm font-medium">
-            Email Address
-          </label>
-          <input
-            id="email"
-            type="email"
-            className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-            required
-          />
-        </div>
-        <div className="space-y-1 md:space-y-2">
-          <label htmlFor="phone" className="text-sm font-medium">
-            Phone Number
-          </label>
-          <input
-            id="phone"
-            className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-            required
-          />
-        </div>
-        <div className="space-y-1 md:space-y-2">
-          <label htmlFor="participants" className="text-sm font-medium">
-            Number of Participants
-          </label>
-          <input
-            id="participants"
-            type="number"
-            min="1"
-            className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="space-y-1 md:space-y-2">
-        <label className="text-sm font-medium">Vehicle Type</label>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <label className="flex items-center space-x-2 text-sm md:text-base">
-            <input type="checkbox" className="rounded border-gray-300 w-4 h-4 md:w-5 md:h-5" />
-            <span>Quad Bike</span>
-          </label>
-          <label className="flex items-center space-x-2 text-sm md:text-base">
-            <input type="checkbox" className="rounded border-gray-300 w-4 h-4 md:w-5 md:h-5" />
-            <span>Side-by-Side</span>
-          </label>
-          <label className="flex items-center space-x-2 text-sm md:text-base">
-            <input type="checkbox" className="rounded border-gray-300 w-4 h-4 md:w-5 md:h-5" />
-            <span>4x4 Car</span>
-          </label>
-          <label className="flex items-center space-x-2 text-sm md:text-base">
-            <input type="checkbox" className="rounded border-gray-300 w-4 h-4 md:w-5 md:h-5" />
-            <span>Other</span>
-          </label>
-        </div>
-      </div>
-
-      <div className="space-y-1 md:space-y-2">
-        <label htmlFor="vehicleCount" className="text-sm font-medium">
-          Number of Vehicles
-        </label>
-        <input
-          id="vehicleCount"
-          type="number"
-          min="1"
-          className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-          required
-        />
-      </div>
-
-      <div className="space-y-1 md:space-y-2">
-        <label className="text-sm font-medium">Accommodation Preference</label>
-        <div className="space-y-2 md:space-y-3">
-          <label className="flex items-center space-x-2 text-sm md:text-base">
-            <input
-              type="radio"
-              name="accommodation"
-              value="blue-ocean"
-              className="rounded-full border-gray-300 w-4 h-4 md:w-5 md:h-5"
-            />
-            <span>Blue Ocean Lodging (R1,250 per person per night)</span>
-          </label>
-          <label className="flex items-center space-x-2 text-sm md:text-base">
-            <input
-              type="radio"
-              name="accommodation"
-              value="island-rock"
-              className="rounded-full border-gray-300 w-4 h-4 md:w-5 md:h-5"
-            />
-            <span>Island Rock Lapa Houses (R850 per lapa per night)</span>
-          </label>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <div className="space-y-1 md:space-y-2">
-          <label htmlFor="arrivalDate" className="text-sm font-medium">
-            Arrival Date
-          </label>
-          <input
-            id="arrivalDate"
-            type="date"
-            className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-            required
-          />
-        </div>
-        <div className="space-y-1 md:space-y-2">
-          <label htmlFor="departureDate" className="text-sm font-medium">
-            Departure Date
-          </label>
-          <input
-            id="departureDate"
-            type="date"
-            className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="space-y-1 md:space-y-2">
-        <label htmlFor="specialRequests" className="text-sm font-medium">
-          Special Requests or Comments
-        </label>
-        <textarea
-          id="specialRequests"
-          rows={4}
-          className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md text-sm md:text-base"
-        ></textarea>
-      </div>
-
-      <Button
-        type="submit"
-        className="w-full bg-yellow-500 hover:bg-yellow-600 text-black py-2 md:py-6 text-sm md:text-lg"
-      >
-        Submit Booking Request
-      </Button>
-    </form>
   )
 }

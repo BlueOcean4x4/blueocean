@@ -4,11 +4,13 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
+import { Menu, X, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useUser } from "@clerk/nextjs"
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false)
+  const { user, isSignedIn } = useUser()
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -86,6 +88,54 @@ export function MobileMenu() {
           >
             Book Now
           </Link>
+
+          {isSignedIn ? (
+            <>
+              <Link
+                href="/profile"
+                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+                onClick={menuItemClick}
+              >
+                <div className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  <span>My Profile</span>
+                </div>
+              </Link>
+              {user?.publicMetadata.isAdmin && (
+                <Link
+                  href="/admin"
+                  className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+                  onClick={menuItemClick}
+                >
+                  Admin Dashboard
+                </Link>
+              )}
+              <Link
+                href="/sign-out"
+                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+                onClick={menuItemClick}
+              >
+                Sign Out
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/sign-in"
+                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+                onClick={menuItemClick}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/sign-up"
+                className="block px-3 py-4 text-base font-medium text-gray-700 hover:text-blue-600"
+                onClick={menuItemClick}
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>
