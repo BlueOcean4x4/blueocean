@@ -4,7 +4,7 @@ import { router, publicProcedure, protectedProcedure, adminProcedure } from "@/l
 
 export const bookingRouter = router({
   // Create a new booking
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         fullName: z.string().min(2),
@@ -22,7 +22,7 @@ export const bookingRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       // Check if the slot exists and has available spots
-      const slot = await ctx.prisma.bookingSlot.findUnique({
+      const slot = await ctx.db.bookingSlot.findUnique({
         where: { id: input.slotId },
       })
 
@@ -41,7 +41,7 @@ export const bookingRouter = router({
       }
 
       // Create the booking
-      const booking = await ctx.prisma.booking.create({
+      const booking = await ctx.db.booking.create({
         data: {
           fullName: input.fullName,
           email: input.email,
@@ -59,7 +59,7 @@ export const bookingRouter = router({
       })
 
       // Update available spots in the slot
-      await ctx.prisma.bookingSlot.update({
+      await ctx.db.bookingSlot.update({
         where: { id: input.slotId },
         data: {
           availableSpots: slot.availableSpots - input.participants,
@@ -71,7 +71,7 @@ export const bookingRouter = router({
 
   // Get all bookings (admin only)
   getAll: adminProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.booking.findMany({
+    return ctx.db.booking.findMany({
       include: {
         slot: true,
         user: {
@@ -89,7 +89,7 @@ export const bookingRouter = router({
 
   // Get booking by ID (admin or booking owner)
   getById: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
-    const booking = await ctx.prisma.booking.findUnique({
+    const booking = await ctx.db.booking.findUnique({
       where: { id: input.id },
       include: {
         slot: true,
@@ -123,7 +123,7 @@ export const bookingRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const booking = await ctx.prisma.booking.findUnique({
+      const booking = await ctx.db.booking.findUnique({
         where: { id: input.id },
         include: { slot: true },
       })
@@ -137,7 +137,7 @@ export const bookingRouter = router({
 
       // If cancelling a booking, add the spots back to available
       if (input.status === "CANCELLED" && booking.status !== "CANCELLED") {
-        await ctx.prisma.bookingSlot.update({
+        await ctx.db.bookingSlot.update({
           where: { id: booking.slotId },
           data: {
             availableSpots: booking.slot.availableSpots + booking.participants,
@@ -147,7 +147,7 @@ export const bookingRouter = router({
 
       // If un-cancelling a booking, remove the spots from available
       if (booking.status === "CANCELLED" && input.status !== "CANCELLED") {
-        await ctx.prisma.bookingSlot.update({
+        await ctx.db.bookingSlot.update({
           where: { id: booking.slotId },
           data: {
             availableSpots: booking.slot.availableSpots - booking.participants,
@@ -155,7 +155,7 @@ export const bookingRouter = router({
         })
       }
 
-      return ctx.prisma.booking.update({
+      return ctx.db.booking.update({
         where: { id: input.id },
         data: { status: input.status },
       })
@@ -163,7 +163,7 @@ export const bookingRouter = router({
 
   // Get user's bookings
   getUserBookings: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.booking.findMany({
+    return ctx.db.booking.findMany({
       where: { userId: ctx.user.id },
       include: {
         slot: true,

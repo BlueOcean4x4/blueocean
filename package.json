@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:init": "npx tsx scripts/db-init.ts",
+    "db:push": "npx prisma db push",
+    "db:seed": "npx tsx lib/seed.ts",
+    "db:studio": "npx prisma studio"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.18.5",

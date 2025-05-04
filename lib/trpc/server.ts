@@ -1,6 +1,8 @@
 import { initTRPC, TRPCError } from "@trpc/server"
 import { ZodError } from "zod"
 import { db } from "@/lib/db"
+import { auth } from "@clerk/nextjs/server"
+import { getCurrentUser } from "@/lib/auth"
 
 // Try to import Prisma, but don't fail if it's not available
 let prisma: any
@@ -13,9 +15,7 @@ try {
 }
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const user = null
-
-  // We'll implement user authentication later
+  const user = await getCurrentUser()
 
   return {
     db: prisma,

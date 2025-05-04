@@ -5,7 +5,7 @@ import { router, publicProcedure, adminProcedure } from "@/lib/trpc/server"
 export const slotRouter = router({
   // Get all active booking slots
   getActive: publicProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.bookingSlot.findMany({
+    return ctx.db.bookingSlot.findMany({
       where: { isActive: true },
       orderBy: { startDate: "asc" },
     })
@@ -13,7 +13,7 @@ export const slotRouter = router({
 
   // Get all booking slots (including inactive ones) - admin only
   getAll: adminProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.bookingSlot.findMany({
+    return ctx.db.bookingSlot.findMany({
       orderBy: { startDate: "asc" },
     })
   }),
@@ -41,7 +41,7 @@ export const slotRouter = router({
         })
       }
 
-      return ctx.prisma.bookingSlot.create({
+      return ctx.db.bookingSlot.create({
         data: input,
       })
     }),
@@ -65,7 +65,7 @@ export const slotRouter = router({
       const { id, ...data } = input
 
       // Check if the slot exists
-      const slot = await ctx.prisma.bookingSlot.findUnique({
+      const slot = await ctx.db.bookingSlot.findUnique({
         where: { id },
       })
 
@@ -84,7 +84,7 @@ export const slotRouter = router({
         })
       }
 
-      return ctx.prisma.bookingSlot.update({
+      return ctx.db.bookingSlot.update({
         where: { id },
         data,
       })
@@ -93,7 +93,7 @@ export const slotRouter = router({
   // Delete a booking slot (admin only)
   delete: adminProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
     // Check if there are any bookings for this slot
-    const bookingsCount = await ctx.prisma.booking.count({
+    const bookingsCount = await ctx.db.booking.count({
       where: { slotId: input.id },
     })
 
@@ -104,14 +104,14 @@ export const slotRouter = router({
       })
     }
 
-    return ctx.prisma.bookingSlot.delete({
+    return ctx.db.bookingSlot.delete({
       where: { id: input.id },
     })
   }),
 
   // Get a single booking slot by ID
   getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
-    const slot = await ctx.prisma.bookingSlot.findUnique({
+    const slot = await ctx.db.bookingSlot.findUnique({
       where: { id: input.id },
     })
 
