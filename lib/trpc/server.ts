@@ -3,6 +3,9 @@ import { ZodError } from "zod"
 import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
+// Import the Prisma check to ensure client is generated
+import "@/lib/prisma-check"
+
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   try {
     const user = await getCurrentUser()
