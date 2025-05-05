@@ -76,7 +76,7 @@ export function ScheduleForm({ schedule, onClose }: ScheduleFormProps) {
           title: formData.title,
           description: formData.description,
           startTime: new Date(formData.startTime).toISOString(),
-          date: new Date(formData.endTime),
+          date: formData.endTime,
           location: formData.location,
           activities: [],
           isActive: formData.isActive,
@@ -86,7 +86,7 @@ export function ScheduleForm({ schedule, onClose }: ScheduleFormProps) {
           title: formData.title,
           description: formData.description,
           startTime: new Date(formData.startTime).toISOString(),
-          date: new Date(formData.endTime),
+          date: formData.endTime,
           location: formData.location,
           activities: [],
         });
