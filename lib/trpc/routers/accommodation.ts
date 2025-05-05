@@ -78,16 +78,16 @@ export const accommodationRouter = router({
   // Delete an accommodation option (admin only)
   delete: adminProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
     // Check if there are any bookings for this accommodation
-    const bookingsCount = await ctx.db.booking.count({
-      where: { accommodationId: input.id },
-    })
+    // const bookingsCount = await ctx.db.booking.count({
+    //   where: { accommodation: {id: input.id }},
+    // })
 
-    if (bookingsCount > 0) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Cannot delete an accommodation option with existing bookings",
-      })
-    }
+    // if (bookingsCount > 0) {
+    //   throw new TRPCError({
+    //     code: "BAD_REQUEST",
+    //     message: "Cannot delete an accommodation option with existing bookings",
+    //   })
+    // }
 
     return ctx.db.accommodation.delete({
       where: { id: input.id },

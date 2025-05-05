@@ -65,13 +65,23 @@ export function AccommodationManagement() {
   };
 
   const handleDelete = (id: string) => {
+    console.log("Delete button clicked for accommodation:", id);
     setAccommodationToDelete(id);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = async () => {
+    console.log(
+      "Confirm delete called for accommodation:",
+      accommodationToDelete
+    );
     if (accommodationToDelete) {
-      await deleteAccommodation.mutateAsync({ id: accommodationToDelete });
+      try {
+        await deleteAccommodation.mutateAsync({ id: accommodationToDelete });
+        console.log("Delete mutation successful");
+      } catch (error) {
+        console.error("Delete mutation failed:", error);
+      }
       setDeleteDialogOpen(false);
       setAccommodationToDelete(null);
     }

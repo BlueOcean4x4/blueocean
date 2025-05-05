@@ -1,5 +1,4 @@
-import { clerkClient } from "@clerk/nextjs/server"
-import { auth } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
 
 // Try to import Prisma, but don't fail if it's not available
@@ -14,7 +13,7 @@ try {
 export async function getCurrentUser() {
   const session = await auth()
   const userId = session?.userId
-  console.log('Auth check - userId:', userId)
+  // console.log('Auth check - userId:', userId)
 
   if (!userId) {
     console.log('Auth check - No userId found')
@@ -28,13 +27,17 @@ export async function getCurrentUser() {
         clerkId: userId,
       },
     })
-    console.log('Auth check - Found user in database:', user)
+    // console.log('Auth check - Found user in database:', user)
 
     // If user doesn't exist in our database yet, create them
     if (!user) {
-      console.log('Auth check - User not found in database, creating new user')
-      const clerkUser = await clerkClient.users.getUser(userId)
-      console.log('Auth check - Clerk user:', clerkUser)
+      // console.log('Auth check - User not found in database, creating new user')
+      const clerkUser = await currentUser()
+      // console.log('Auth check - Clerk user:', clerkUser)
+
+      if (!clerkUser) {
+        throw new Error("No Clerk user found")
+      }
 
       user = await prisma.user.create({
         data: {
@@ -44,7 +47,7 @@ export async function getCurrentUser() {
           isAdmin: clerkUser.publicMetadata.isAdmin === true,
         },
       })
-      console.log('Auth check - Created new user:', user)
+      // console.log('Auth check - Created new user:', user)
     }
 
     // Return user with isAdmin status
@@ -61,9 +64,9 @@ export async function getCurrentUser() {
 }
 
 export async function isAdmin() {
-  console.log('isAdmin - Getting current user')
+  // console.log('isAdmin - Getting current user')
   const user = await getCurrentUser()
-  console.log('isAdmin - Current user:', user)
-  console.log('isAdmin - isAdmin value:', user?.isAdmin)
+  // console.log('isAdmin - Current user:', user)
+  // console.log('isAdmin - isAdmin value:', user?.isAdmin)
   return user?.isAdmin || false
 }
