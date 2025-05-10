@@ -80,13 +80,6 @@ export function MobileMenu() {
             Schedule
           </Link>
           <Link
-            href="/accommodation"
-            className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-            onClick={menuItemClick}
-          >
-            Accommodation
-          </Link>
-          <Link
             href="/sponsors"
             className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={menuItemClick}
@@ -94,15 +87,15 @@ export function MobileMenu() {
             Sponsors
           </Link>
           <Link
-            href="/#booking"
+            href="mailto:blueoceanmoz@icloud.com"
             className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
             onClick={menuItemClick}
           >
-            Book Now
+            Book Your Spot
           </Link>
 
           <div className="border-t border-gray-100">
-            {isSignedIn ? (
+            {/* {isSignedIn ? (
               <>
                 <Link
                   href="/profile"
@@ -151,7 +144,7 @@ export function MobileMenu() {
                   Sign Up
                 </Link>
               </>
-            )}
+            )} */}
           </div>
         </div>
       </div>

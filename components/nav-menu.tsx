@@ -19,9 +19,8 @@ export function NavMenu() {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/schedule", label: "Schedule" },
-    { href: "/accommodation", label: "Accommodation" },
     { href: "/sponsors", label: "Sponsors" },
-    { href: "/#booking", label: "Book Now" },
+    { href: "mailto:blueoceanmoz@icloud.com", label: "Book Your Spot" },
   ];
 
   return (
@@ -37,7 +36,7 @@ export function NavMenu() {
             {item.label}
           </Link>
         ))}
-        {isSignedIn ? (
+        {/* {isSignedIn ? (
           <>
             <Link
               href="/profile"
@@ -81,7 +80,7 @@ export function NavMenu() {
               Sign Up
             </Link>
           </>
-        )}
+        )} */}
       </div>
 
       {/* Mobile Navigation */}

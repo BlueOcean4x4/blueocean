@@ -15,17 +15,11 @@ export function MainNav() {
         <Link href="/schedule" className="text-gray-700 hover:text-blue-600">
           Schedule
         </Link>
-        <Link
-          href="/accommodation"
-          className="text-gray-700 hover:text-blue-600"
-        >
-          Accommodation
-        </Link>
         <Link href="/sponsors" className="text-gray-700 hover:text-blue-600">
           Sponsors
         </Link>
-        <Link href="/#booking" className="text-gray-700 hover:text-blue-600">
-          Book Now
+        <Link href="mailto:blueoceanmoz@icloud.com" className="text-gray-700 hover:text-blue-600">
+          Book Your Spot
         </Link>
       </div>
     );
@@ -39,20 +33,17 @@ export function MainNav() {
       <Link href="/schedule" className="text-gray-700 hover:text-blue-600">
         Schedule
       </Link>
-      <Link href="/accommodation" className="text-gray-700 hover:text-blue-600">
-        Accommodation
-      </Link>
       <Link href="/sponsors" className="text-gray-700 hover:text-blue-600">
         Sponsors
       </Link>
-      <Link href="/#booking" className="text-gray-700 hover:text-blue-600">
-        Book Now
+      <Link href="mailto:blueoceanmoz@icloud.com" className="text-gray-700 hover:text-blue-600">
+        Book Your Spot
       </Link>
-      {isSignedIn && user?.publicMetadata?.isAdmin === true && (
+      {/* {isSignedIn && user?.publicMetadata?.isAdmin === true && (
         <Link href="/admin" className="text-gray-700 hover:text-blue-600">
           Admin
         </Link>
-      )}
+      )} */}
     </div>
   );
 }

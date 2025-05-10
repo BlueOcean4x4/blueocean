@@ -17,11 +17,82 @@ interface Schedule {
 }
 
 export default function SchedulePage() {
-  const { data: schedules } = trpc.schedule.getAll.useQuery();
+  const schedules = [
+    {
+      id: "day1",
+      isActive: true,
+      date: new Date("2024-10-03"),
+      title: "October 3rd – Friday",
+      description: "Arrival & Registration",
+      startTime: "08:00",
+      location: "Blue Ocean Base Camp",
+      activities: [
+        "Meet fellow riders, register your vehicle, and settle in for the adventure ahead.",
+        "Registration opens at 08:00",
+        "Welcome BBQ to kick off the rally spirit!",
+      ],
+    },
+    {
+      id: "day2",
+      isActive: true,
+      date: new Date("2024-10-04"),
+      title: "October 4th – Saturday",
+      description: "Round 1 Begins",
+      startTime: "09:00",
+      location: "Blue Ocean Base Camp",
+      activities: [
+        "12 KM of scenic beach, rolling dunes, and bush trails",
+        "Fun for all skill levels",
+        "Evening bonfire with live music",
+      ],
+    },
+    {
+      id: "day3",
+      isActive: true,
+      date: new Date("2024-10-05"),
+      title: "October 5th – Sunday",
+      description: "Round 2",
+      startTime: "09:00",
+      location: "Blue Ocean Base Camp",
+      activities: [
+        "26 KM route ending at a wild bush camp",
+        "All drinks and food included",
+        "Campfire vibes, music, and good company",
+        "Nightly storytelling session around the fire",
+      ],
+    },
+    {
+      id: "day4",
+      isActive: true,
+      date: new Date("2024-10-06"),
+      title: "October 6th – Monday",
+      description: "Round 3",
+      startTime: "09:00",
+      location: "Bush Camp",
+      activities: [
+        "24 KM of rugged terrain",
+        "Ride ends at a stunning sunset camp",
+        "Food and drinks included",
+        "Special evening with local cultural performances",
+      ],
+    },
+    {
+      id: "day5",
+      isActive: true,
+      date: new Date("2024-10-07"),
+      title: "October 7th – Tuesday",
+      description: "Round 4 & Final Ride",
+      startTime: "09:00",
+      location: "Sunset Camp",
+      activities: [
+        "24 KM coastal bush route",
+        "Ends at Blue Ocean Restaurant for a lamb spit feast",
+        "Prize giving & sponsor appreciation",
+        "Farewell party with DJ and dancing",
+      ],
+    },
+  ];
 
-  // if (!schedules) {
-  //   return <div>Loading...</div>;
-  // }
 
   return (
     <div className="min-h-screen">
@@ -39,39 +110,39 @@ export default function SchedulePage() {
 
       <main className="container mx-auto px-4 py-6 md:py-12">
         <div className="max-w-4xl mx-auto space-y-6 md:space-y-12">
-          {schedules && schedules.length > 0 ? (  
+          {schedules && schedules.length > 0 ? (
             schedules.map((schedule: Schedule) => (
               <div
                 key={schedule.id}
-              className="bg-white p-4 md:p-8 rounded-lg shadow-md border-l-4 border-blue-600"
-            >
-              <div className="flex items-center gap-3 mb-3 md:mb-6">
-                <Calendar className="h-5 w-5 md:h-6 md:w-6 text-blue-600 flex-shrink-0" />
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
-                  {schedule.title}
-                </h2>
-              </div>
-              <div className="space-y-3 md:space-y-6">
-                <div>
-                  <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2">
-                    {schedule.description}
-                  </h3>
-                  <ul className="space-y-2 ml-6 list-disc text-sm md:text-base">
-                    {schedule.activities.map(
-                      (activity: string, index: number) => (
-                        <li key={index}>{activity}</li>
-                      )
-                    )}
-                  </ul>
+                className="bg-white p-4 md:p-8 rounded-lg shadow-md border-l-4 border-blue-600"
+              >
+                <div className="flex items-center gap-3 mb-3 md:mb-6">
+                  <Calendar className="h-5 w-5 md:h-6 md:w-6 text-blue-600 flex-shrink-0" />
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+                    {schedule.title}
+                  </h2>
                 </div>
-                <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600">
-                  <Clock className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                  <span>Start Time: {schedule.startTime}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600">
-                  <MapPin className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
-                  <span>Location: {schedule.location}</span>
-                </div>
+                <div className="space-y-3 md:space-y-6">
+                  <div>
+                    <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2">
+                      {schedule.description}
+                    </h3>
+                    <ul className="space-y-2 ml-6 list-disc text-sm md:text-base">
+                      {schedule.activities.map(
+                        (activity: string, index: number) => (
+                          <li key={index}>{activity}</li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600">
+                    <Clock className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                    <span>Start Time: {schedule.startTime}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600">
+                    <MapPin className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                    <span>Location: {schedule.location}</span>
+                  </div>
                 </div>
               </div>
             ))
@@ -81,7 +152,7 @@ export default function SchedulePage() {
         </div>
 
         <div className="mt-6 md:mt-12 text-center">
-          <Link href="/#booking">
+          <Link href="mailto:blueoceanmoz@icloud.com">
             <Button
               size="lg"
               className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 md:px-6 md:py-3 text-sm md:text-base"

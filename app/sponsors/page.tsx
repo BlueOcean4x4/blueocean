@@ -18,6 +18,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { SponsorRequestForm } from "@/components/sponsor-request-form";
+import { SponsorsSection } from "@/components/sponsors-section";
 
 type Sponsor = {
   id: string;
@@ -25,24 +26,11 @@ type Sponsor = {
   description: string;
   logoUrl: string;
   websiteUrl: string;
-  tier: "GOLD" | "SILVER" | "BRONZE";
+  tier: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "PRODUCT";
   amount: number;
 };
 
 export default function SponsorsPage() {
-  const { data: sponsors, isLoading } = trpc.sponsor.getAll.useQuery();
-
-  if (isLoading) {
-    return <div>Loading sponsors...</div>;
-  }
-
-  // Group sponsors by tier
-  const goldSponsors =
-    sponsors?.filter((s: Sponsor) => s.tier === "GOLD") ?? [];
-  const silverSponsors =
-    sponsors?.filter((s: Sponsor) => s.tier === "SILVER") ?? [];
-  const bronzeSponsors =
-    sponsors?.filter((s: Sponsor) => s.tier === "BRONZE") ?? [];
 
   return (
     <div className="min-h-screen">
@@ -64,23 +52,44 @@ export default function SponsorsPage() {
           {/* Introduction */}
           <section className="bg-white p-5 md:p-8 rounded-lg shadow-md">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-blue-600">
-              Sponsorship Opportunity – 4x4 Off-Road Adventure in Mozambique
+              Annual Off-Road Rally in Mozambique
             </h2>
             <p className="text-sm md:text-base mb-4">
-              My name is Shane Le Roux, and I am one of the founders of an
-              exciting new 4x4 off-road track in Mozambique. We are proud to
-              announce the launch of our first annual 4x4 Off-Road Adventure,
-              taking place from October 3rd to 7th, 2025.
+              We're thrilled to announce the launch of a brand-new annual
+              Off-Road Rally in the breathtaking terrains of Mozambique, taking
+              place each year in early October. This high-energy event will
+              feature Mavericks, quads, bikes, side-by-sides, and cars, drawing
+              off-road enthusiasts, adventurers, and performance-driven brands
+              together in one unforgettable experience.
             </p>
             <p className="text-sm md:text-base mb-4">
-              We are currently seeking sponsorship partners to help bring this
-              thrilling event to life. Our vision is to establish this as a
-              premier annual off-road experience, showcasing Mozambique's raw,
-              untouched beauty through beach, dune, and bush trails.
+              Since we first announced the route, we've received overwhelming
+              interest from riders and followers across the region – and the
+              momentum is only growing.
             </p>
           </section>
 
-          {/* Why Partner With Us */}
+          {/* Event Highlights */}
+          <section className="bg-white p-5 md:p-8 rounded-lg shadow-md">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 md:mb-6 text-blue-600">
+              Event Highlights
+            </h2>
+            <ul className="list-disc list-inside space-y-2 text-sm md:text-base">
+              <li>Live entertainment with a band from Nelspruit</li>
+              <li>Spit braai and social evenings for riders and spectators</li>
+              <li>
+                Official rally t-shirts with all sponsor logos prominently
+                displayed
+              </li>
+              <li>High-quality media content produced throughout the event</li>
+              <li>
+                Deadline for sponsorships: June 30th, to ensure time for logo
+                inclusion on shirts, banners, and printed materials
+              </li>
+            </ul>
+          </section>
+
+          {/* Why Sponsor */}
           <section className="bg-white p-5 md:p-8 rounded-lg shadow-md">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 md:mb-6 text-blue-600">
               Why Sponsor This Event?
@@ -92,11 +101,11 @@ export default function SponsorsPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
-                    Exclusive Brand Exposure
+                    Premium Brand Exposure
                   </h3>
                   <p className="text-sm md:text-base">
-                    Your brand will be featured on all vehicles, rider gear,
-                    signage, social media, and marketing materials.
+                    Across vehicles, gear, signage, social media, and all
+                    marketing platforms
                   </p>
                 </div>
               </div>
@@ -109,9 +118,8 @@ export default function SponsorsPage() {
                     Growing Audience
                   </h3>
                   <p className="text-sm md:text-base">
-                    We aim to attract 100+ participants and many more spectators
-                    in year one, with regional and international growth
-                    expected.
+                    100+ participants expected in year one, with even greater
+                    reach through digital media
                   </p>
                 </div>
               </div>
@@ -121,11 +129,10 @@ export default function SponsorsPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
-                    Content & Media Reach
+                    Media & Content Opportunities
                   </h3>
                   <p className="text-sm md:text-base">
-                    We'll produce high-quality video and photo content with
-                    branding opportunities throughout.
+                    Branded video/photo content with strong engagement
                   </p>
                 </div>
               </div>
@@ -135,135 +142,90 @@ export default function SponsorsPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
-                    Community & Legacy
+                    Tourism & Community Impact
                   </h3>
                   <p className="text-sm md:text-base">
-                    Be part of building a flagship annual rally that contributes
-                    to tourism, sport, and community development.
+                    Support an event that promotes adventure tourism and
+                    community upliftment
                   </p>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* What We're Looking For */}
+          {/* Sponsorship Tiers */}
           <section className="bg-white p-5 md:p-8 rounded-lg shadow-md">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 md:mb-6 text-blue-600">
-              What We're Looking For
+              Sponsorship Tiers
             </h2>
-            <p className="text-sm md:text-base mb-6">
-              We are seeking sponsorship in the following forms:
-            </p>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-3 flex items-center">
-                  <Trophy className="h-5 w-5 mr-2 text-blue-600" />
-                  Main Sponsor
-                </h3>
-                <p className="text-sm md:text-base">
-                  Exclusive branding rights and product feature opportunities
-                  throughout the event.
-                </p>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-3 flex items-center">
-                  <Award className="h-5 w-5 mr-2 text-blue-600" />
-                  Prize Sponsor
-                </h3>
-                <p className="text-sm md:text-base">
-                  Provide prizes such as a quad bike or equipment for winners
-                  and participants.
-                </p>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-3 flex items-center">
-                  <Package className="h-5 w-5 mr-2 text-blue-600" />
-                  Gear & Logistics
-                </h3>
-                <p className="text-sm md:text-base">
-                  Support through gear, fuel, or logistical assistance for the
-                  event.
-                </p>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-3 flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2 text-blue-600" />
-                  Cash or Services
-                </h3>
-                <p className="text-sm md:text-base">
-                  Financial sponsorship or service-based support to help make
-                  the event a success.
-                </p>
-              </div>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-blue-50">
+                    <th className="p-3 text-left">Tier</th>
+                    <th className="p-3 text-left">Amount (Rands)</th>
+                    <th className="p-3 text-left">Benefits</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-3 font-semibold">
+                      Platinum Sponsor (Main Title)
+                    </td>
+                    <td className="p-3">QUAD BIKE</td>
+                    <td className="p-3">
+                      Logo on all banners, social media, T-shirts, vehicles
+                      stickers; speaking opportunity; booth at event; major
+                      product display; Squeez pages sent out every week
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 font-semibold">Gold Sponsor</td>
+                    <td className="p-3">R10,000</td>
+                    <td className="p-3">
+                      Prominent branding on event signage and marketing;
+                      mentions in promo material and posts; product placement,
+                      T-shirts
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 font-semibold">Silver Sponsor</td>
+                    <td className="p-3">R5,000</td>
+                    <td className="p-3">
+                      Logo on website, social media posts, T-shirts
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-3 font-semibold">Bronze Sponsor</td>
+                    <td className="p-3">R2,500</td>
+                    <td className="p-3">
+                      Basic brand mentions, social media shoutouts
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-semibold">Product Sponsor</td>
+                    <td className="p-3">Value-based</td>
+                    <td className="p-3">
+                      Branding based on contribution (could be equivalent to
+                      Gold or Platinum tier)
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </section>
-
-          {/* Current Sponsors */}
-          {sponsors && sponsors.length > 0 && (
-            <section className="bg-white p-5 md:p-8 rounded-lg shadow-md">
-              <h2 className="text-xl sm:text-2xl font-bold mb-4 md:mb-6 text-blue-600">
-                Our Current Sponsors
-              </h2>
-
-              {/* Gold Sponsors */}
-              {goldSponsors.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-4">
-                    <Badge className="bg-yellow-100 text-yellow-800 text-base px-3 py-1">
-                      Gold Sponsors
-                    </Badge>
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {goldSponsors.map((sponsor: Sponsor) => (
-                      <SponsorCard key={sponsor.id} sponsor={sponsor} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Silver Sponsors */}
-              {silverSponsors.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-4">
-                    <Badge className="bg-gray-100 text-gray-800 text-base px-3 py-1">
-                      Silver Sponsors
-                    </Badge>
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {silverSponsors.map((sponsor: Sponsor) => (
-                      <SponsorCard key={sponsor.id} sponsor={sponsor} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Bronze Sponsors */}
-              {bronzeSponsors.length > 0 && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-4">
-                    <Badge className="bg-orange-100 text-orange-800 text-base px-3 py-1">
-                      Bronze Sponsors
-                    </Badge>
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {bronzeSponsors.map((sponsor: Sponsor) => (
-                      <SponsorCard key={sponsor.id} sponsor={sponsor} />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </section>
-          )}
-
+          
+          <SponsorsSection />
+          
           {/* Contact Section */}
           <section className="bg-white p-5 md:p-8 rounded-lg shadow-md">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 md:mb-6 text-blue-600">
               Become a Sponsor
             </h2>
             <p className="text-sm md:text-base mb-6">
-              Let's discuss how we can make your brand a visible and valued part
-              of this growing legacy. Fill out the form below to submit your
-              sponsorship request.
+              This is your chance to be part of something exciting, impactful,
+              and lasting. Let's talk about how we can align your brand with the
+              spirit of adventure, endurance, and the great outdoors.
             </p>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-blue-50 p-4 rounded-lg">
@@ -290,15 +252,6 @@ export default function SponsorsPage() {
                     </a>
                   </div>
                 </div>
-              </div>
-              <div className="bg-yellow-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-3">
-                  Sponsorship Packages
-                </h3>
-                <p className="text-sm md:text-base mb-3">
-                  We offer various sponsorship packages tailored to your brand's
-                  needs and budget.
-                </p>
               </div>
             </div>
             <div className="mt-8">

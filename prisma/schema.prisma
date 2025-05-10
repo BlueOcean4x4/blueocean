@@ -96,9 +96,11 @@ enum BookingStatus {
 }
 
 enum SponsorTier {
+  PLATINUM
   GOLD
   SILVER
   BRONZE
+  PRODUCT
 }
 
 model Sponsor {
